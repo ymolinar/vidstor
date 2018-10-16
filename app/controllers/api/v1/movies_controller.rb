@@ -6,7 +6,9 @@ module Api::V1
 
     # GET /movies
     def index
-      @movies = Movie.all
+      # todo: Use paginate to restrict the number of elemnts to show
+      @movies = Movie.includes(:categories, :directors, :writers, :actors)
+                    .references(:categories, :directors, :writers, :actors)
       json_response(@movies)
     end
 
