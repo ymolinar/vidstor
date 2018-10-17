@@ -1,14 +1,16 @@
 # frozen_string_literal: true
 
+
 module Api::V1
   class MoviesController < ApplicationController
+    before_action :authenticate_user!, only: [:create, :update, :destroy]
     before_action :set_movie, only: [:show, :update, :destroy]
 
     # GET /movies
     def index
       # todo: Use paginate to restrict the number of elemnts to show
       @movies = Movie.includes(:categories, :directors, :writers, :actors)
-                    .references(:categories, :directors, :writers, :actors)
+                  .references(:categories, :directors, :writers, :actors)
       json_response(@movies)
     end
 

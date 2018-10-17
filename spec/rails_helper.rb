@@ -87,4 +87,5 @@ RSpec.configure do |config|
   end
 
   config.include RequestSpecHelper, type: :request
+  config.include RequestSpecHelper::AuthenticationHelper, type: :request
 end

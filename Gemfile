@@ -59,3 +59,4 @@ gem 'acts-as-taggable-on'
 gem 'validates_timeliness'
 
 gem 'active_model_serializers'
+gem 'devise-jwt'

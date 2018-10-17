@@ -1,12 +1,14 @@
 require 'rails_helper'
 
 RSpec.describe 'Movies API' do
-  let!(:movie_list) {create_list(:movie, 10)}
-  let(:movie_id) {movie_list.first.id}
-  let(:api_url) {'/api/v1/'}
+  let!(:movie_list) { create_list(:movie, 10) }
+  let(:movie_id) { movie_list.first.id }
+  let(:api_url) { '/api/v1/' }
+  let(:user) { create(:user) }
+  let(:headers) { auth_headers(user) }
 
   describe 'GET /api/v1/movies' do
-    before {get "#{api_url}movies"}
+    before { get "#{api_url}movies" }
     it 'returns movies' do
       expect(json).not_to be_empty
       expect(json.size).to eq(10)
@@ -18,7 +20,7 @@ RSpec.describe 'Movies API' do
   end
 
   describe 'GET /api/v1/movies/:id' do
-    before {get "#{api_url}movies/#{movie_id}"}
+    before { get "#{api_url}movies/#{movie_id}" }
     context 'movie exists' do
       it 'returns the movie object' do
         expect(json).not_to be_empty
@@ -31,7 +33,7 @@ RSpec.describe 'Movies API' do
     end
 
     context 'movie does not exist' do
-      let(:movie_id) {100}
+      let(:movie_id) { 100 }
 
       it 'returns status code 404' do
         expect(response).to have_http_status(404)
@@ -44,10 +46,12 @@ RSpec.describe 'Movies API' do
   end
 
   describe 'POST /movies' do
-    let(:request_attributes) {{title: 'This is a new film', release_date: '2018-10-14'}}
+    let(:request_attributes) { { title: 'This is a new film', release_date: '2018-10-14' } }
 
     context 'when everything is fine' do
-      before {post "#{api_url}movies", params: request_attributes}
+      before do
+        post "#{api_url}movies", params: request_attributes, headers: headers
+      end
 
       it 'create a movie in database' do
         expect(json['title']).to eq('This is a new film')
@@ -65,7 +69,7 @@ RSpec.describe 'Movies API' do
     end
 
     context 'when request with missing title attribute' do
-      before {post "#{api_url}movies", params: {release_date: '2018-10-14'}}
+      before { post "#{api_url}movies", params: { release_date: '2018-10-14' }, headers: auth_headers(user) }
       it 'returns validation error messages' do
         expect(json['errors']['title'].size).to eq(2)
       end
@@ -76,7 +80,7 @@ RSpec.describe 'Movies API' do
     end
 
     context 'when request with invalid too short title attribute' do
-      before {post "#{api_url}movies", params: {title: 'a', release_date: '2018-10-14'}}
+      before { post "#{api_url}movies", params: { title: 'a', release_date: '2018-10-14' }, headers: auth_headers(user) }
       it 'returns validation error messages' do
         expect(json['errors']['title'].size).to eq(1)
         expect(json['errors']['title'][0]).to match(/is too short/)
@@ -88,11 +92,33 @@ RSpec.describe 'Movies API' do
     end
   end
 
+  describe 'DELETE /movies/:id' do
+    context 'when the record exists' do
+      before { delete "#{api_url}movies/#{movie_id}", headers: headers }
+
+      context 'when request is ok' do
+        it 'delete the record' do
+          expect(response.body).to be_empty
+        end
+
+        it 'returns status code 204' do
+          expect(response).to have_http_status(204)
+        end
+      end
+    end
+    context 'when the record does not exists' do
+      before { delete "#{api_url}movies/100", headers: headers }
+      it 'returns status code 404' do
+        expect(response).to have_http_status(404)
+      end
+    end
+  end
+
   describe 'PUT /movies/:id' do
-    let(:request_attributes) {{title: 'Toy story'}}
+    let(:request_attributes) { { title: 'Toy story' } }
 
     context 'when the record exists' do
-      before {put "#{api_url}movies/#{movie_id}", params: request_attributes}
+      before { put "#{api_url}movies/#{movie_id}", params: request_attributes, headers: headers }
 
       context 'when request is ok' do
         it 'updates the record' do
@@ -103,9 +129,12 @@ RSpec.describe 'Movies API' do
           expect(response).to have_http_status(204)
         end
       end
+    end
 
-      context 'when request is invalid' do
-        let(:request_attributes){{}}
+    context 'when the record does not exists' do
+      before { put "#{api_url}movies/100", params: request_attributes, headers: headers }
+      it 'returns status code 404' do
+        expect(response).to have_http_status(404)
       end
     end
   end
