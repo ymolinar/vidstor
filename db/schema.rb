@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_10_17_151035) do
+ActiveRecord::Schema.define(version: 2018_10_18_171023) do
 
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
@@ -37,6 +37,23 @@ ActiveRecord::Schema.define(version: 2018_10_17_151035) do
     t.string "jti", null: false
     t.datetime "exp", null: false
     t.index ["jti"], name: "index_jwt_blacklist_on_jti"
+  end
+
+  create_table "loans", force: :cascade do |t|
+    t.integer "user_id"
+    t.datetime "expire_at", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "status", default: 0
+    t.index ["status"], name: "index_loans_on_status"
+    t.index ["user_id"], name: "index_loans_on_user_id"
+  end
+
+  create_table "loans_movies", id: false, force: :cascade do |t|
+    t.integer "loan_id", null: false
+    t.integer "movie_id", null: false
+    t.index ["loan_id"], name: "index_loans_movies_on_loan_id"
+    t.index ["movie_id"], name: "index_loans_movies_on_movie_id"
   end
 
   create_table "movies", force: :cascade do |t|
@@ -90,6 +107,7 @@ ActiveRecord::Schema.define(version: 2018_10_17_151035) do
     t.string "reset_password_token"
     t.datetime "reset_password_sent_at"
     t.datetime "remember_created_at"
+    t.integer "loans_counter", default: 0
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end

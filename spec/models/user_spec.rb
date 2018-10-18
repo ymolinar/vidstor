@@ -1,14 +1,16 @@
 require 'rails_helper'
 
 RSpec.describe User, type: :model do
-  let(:user) {User.new}
-  it {should validate_presence_of(:first_name)}
-  it {should validate_length_of(:first_name).is_at_least(2).is_at_most(60)}
+  let(:user) { User.new }
+  it { should validate_presence_of(:first_name) }
+  it { should validate_length_of(:first_name).is_at_least(2).is_at_most(60) }
+  it { should have_many(:loans) }
 
   describe 'Database Table' do
-    it {is_expected.to have_db_column(:first_name).of_type(:string).with_options(null: false)}
-    it {is_expected.to have_db_column(:middle_name).of_type(:string)}
-    it {is_expected.to have_db_column(:last_name).of_type(:string)}
+    it { is_expected.to have_db_column(:first_name).of_type(:string).with_options(null: false) }
+    it { is_expected.to have_db_column(:middle_name).of_type(:string) }
+    it { is_expected.to have_db_column(:last_name).of_type(:string) }
+    it { is_expected.to have_db_column(:loans_counter).of_type(:integer).with_options(default: 0) }
   end
 
   describe 'user first name validations' do

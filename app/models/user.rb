@@ -7,6 +7,7 @@ class User < ApplicationRecord
          :recoverable, :rememberable, :validatable,
          :jwt_authenticatable, jwt_revocation_strategy: JwtBlacklist
   has_one_attached :avatar
+  has_many :loans, dependent: :restrict_with_exception
   validates :first_name, presence: true, length: { in: 2..60 }
   validate :avatar_mime_type_size
 
@@ -14,8 +15,8 @@ class User < ApplicationRecord
 
   def avatar_mime_type_size
     errors.add(:avatar, 'invalid image type') if avatar.attached? &&
-                                                 !avatar.content_type.in?(
-                                                   %w[image/jpg image/jpeg image/gif image/png]
-                                                 )
+      !avatar.content_type.in?(
+        %w[image/jpg image/jpeg image/gif image/png]
+      )
   end
 end

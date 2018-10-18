@@ -1,27 +1,28 @@
 require 'rails_helper'
 
 RSpec.describe Movie, type: :model do
-  let(:movie) {Movie.new}
-  subject {FactoryBot.create(:movie)}
+  let(:movie) { Movie.new }
+  subject { FactoryBot.create(:movie) }
   # Testing model validations with shoulda gem
-  it {should validate_presence_of(:title)}
-  it {should validate_length_of(:title).is_at_least(2).is_at_most(250)}
-  it {should validate_uniqueness_of(:title).case_insensitive}
-  it {should allow_value(Date.new).for(:release_date)}
-  it {should validate_inclusion_of(:classification).in_array(%w(G PG PG-13 R NC-17))}
-  it {should validate_numericality_of(:duration)}
-  it {should validate_numericality_of(:loan_price)}
+  it { should validate_presence_of(:title) }
+  it { should validate_length_of(:title).is_at_least(2).is_at_most(250) }
+  it { should validate_uniqueness_of(:title).case_insensitive }
+  it { should allow_value(Date.new).for(:release_date) }
+  it { should validate_inclusion_of(:classification).in_array(%w(G PG PG-13 R NC-17)) }
+  it { should validate_numericality_of(:duration) }
+  it { should validate_numericality_of(:loan_price) }
+  it { should have_and_belong_to_many(:loans) }
 
   describe 'Database Table' do
-    it {is_expected.to have_db_column(:title).of_type(:string).with_options(null: false)}
-    it {should have_db_index(:title).unique(true)}
-    it {is_expected.to have_db_column(:release_date).of_type(:date)}
-    it {is_expected.to have_db_column(:duration).of_type(:integer).with_options(default: 1)}
-    it {is_expected.to have_db_column(:country).of_type(:string).with_options(default: 'usa')}
-    it {is_expected.to have_db_column(:classification).of_type(:string).with_options(default: 'G')}
-    it {is_expected.to have_db_column(:imdb_code).of_type(:string)}
-    it {is_expected.to have_db_column(:youtube_trailer_code).of_type(:string)}
-    it {is_expected.to have_db_column(:loan_price).of_type(:decimal).with_options(precision: 4, scale: 2)}
+    it { is_expected.to have_db_column(:title).of_type(:string).with_options(null: false) }
+    it { should have_db_index(:title).unique(true) }
+    it { is_expected.to have_db_column(:release_date).of_type(:date) }
+    it { is_expected.to have_db_column(:duration).of_type(:integer).with_options(default: 1) }
+    it { is_expected.to have_db_column(:country).of_type(:string).with_options(default: 'usa') }
+    it { is_expected.to have_db_column(:classification).of_type(:string).with_options(default: 'G') }
+    it { is_expected.to have_db_column(:imdb_code).of_type(:string) }
+    it { is_expected.to have_db_column(:youtube_trailer_code).of_type(:string) }
+    it { is_expected.to have_db_column(:loan_price).of_type(:decimal).with_options(precision: 4, scale: 2) }
   end
 
   describe 'attachment process' do
