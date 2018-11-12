@@ -5,11 +5,12 @@ Rails.application.routes.draw do
   devise_for :users,
              path: 'auth',
              path_names: { sign_in: 'login', sign_out: 'logout' },
-             controllers: { sessions: :sessions }
+             controllers: { sessions: :sessions, registrations: :registrations }
   namespace :api do
     namespace :v1 do
       resources :movies
-      resources :users, only: [:index, :show] do
+      resources :categories, only: %i[index]
+      resources :users, only: %i[index show] do
         resources :loans
       end
     end

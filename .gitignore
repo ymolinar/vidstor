@@ -28,3 +28,4 @@
 
 # Ignore .idea folder from jetbrains IDE's
 /.idea
+db_files

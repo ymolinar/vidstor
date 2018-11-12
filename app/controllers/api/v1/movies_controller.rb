@@ -1,17 +1,15 @@
 # frozen_string_literal: true
 
-
 module Api::V1
   class MoviesController < ApplicationController
-    before_action :authenticate_user!, only: [:create, :update, :destroy]
-    before_action :set_movie, only: [:show, :update, :destroy]
+    before_action :authenticate_user!, only: %i[create update destroy]
+    before_action :set_movie, only: %i[show update destroy]
+    respond_to :json
 
     # GET /movies
     def index
-      # todo: Use paginate to restrict the number of elemnts to show
-      @movies = Movie.includes(:categories, :directors, :writers, :actors)
-                  .references(:categories, :directors, :writers, :actors)
-      json_response(@movies)
+      @movies = Movie.reduce(filter_movie_params).page(params[:current_page])
+      render json: @movies, meta: pagination_dict(@movies)
     end
 
     # GET /movies/:id
@@ -27,8 +25,8 @@ module Api::V1
 
     # PUT /movies/:id
     def update
-      @movie.update(movie_params)
-      head :no_content
+      @movie.update!(movie_params)
+      json_response(@movie, :ok)
     end
 
     # DELETE /movies/:id
@@ -40,16 +38,32 @@ module Api::V1
 
     private
 
+    def pagination_dict(collection)
+      {
+        current_page: collection.current_page,
+        next_page: collection.next_page,
+        prev_page: collection.prev_page,
+        total_pages: collection.total_pages,
+        total_count: collection.total_count
+      }
+    end
+
+
     def movie_params
       params.permit(:title, :release_date, :duration, :category_list,
                     :director_list, :writer_list, :actor_list, :country, :classification,
                     :imdb_code, :youtube_trailer_code, :loan_price, :created_at, :updated_at,
-                    :cover
-      )
+                    :cover)
+    end
+
+    def filter_movie_params
+      params.permit(:title, :category, :classification, :sortBy, :sortDirection)
     end
 
     def set_movie
-      @movie = Movie.find(params[:id])
+      @movie = Movie.includes(:categories, :directors, :writers, :actors)
+                 .references(:categories, :directors, :writers, :actors).with_attached_cover
+                 .find(params[:id])
     end
   end
 end
