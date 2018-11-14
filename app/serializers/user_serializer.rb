@@ -9,7 +9,7 @@ class UserSerializer < ActiveModel::Serializer
     if object.avatar.attached?
       rails_blob_path(object.avatar, only_path: true)
     else
-      'avatar_2x.png'
+      '/avatar_2x.png'
     end
   end
 end

@@ -53,7 +53,7 @@ module Api::V1
       params.permit(:title, :release_date, :duration, :category_list,
                     :director_list, :writer_list, :actor_list, :country, :classification,
                     :imdb_code, :youtube_trailer_code, :loan_price, :created_at, :updated_at,
-                    :cover)
+                    :cover, :synopsis)
     end
 
     def filter_movie_params

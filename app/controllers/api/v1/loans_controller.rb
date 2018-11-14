@@ -8,7 +8,7 @@ module Api::V1
 
     # GET /users/:user_id/loans
     def index
-      json_response @user.loans
+      json_response @user.loans.includes(:movies).references(:movies).order(updated_at: :desc)
     end
 
     # GET /users/:user_id/loans/id
@@ -25,7 +25,7 @@ module Api::V1
     # PUT /users/:user_id/loans/:id
     def update
       @loan.update!(update_loan_params)
-      head :no_content
+      json_response(@loan, :ok)
     end
 
     private
