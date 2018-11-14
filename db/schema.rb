@@ -18,8 +18,8 @@ ActiveRecord::Schema.define(version: 2018_10_18_171023) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
-    t.integer "record_id", null: false
-    t.integer "blob_id", null: false
+    t.bigint "record_id", null: false
+    t.bigint "blob_id", null: false
     t.datetime "created_at", null: false
     t.index ["blob_id"], name: "index_active_storage_attachments_on_blob_id"
     t.index ["record_type", "record_id", "name", "blob_id"], name: "index_active_storage_attachments_uniqueness", unique: true
@@ -43,7 +43,7 @@ ActiveRecord::Schema.define(version: 2018_10_18_171023) do
   end
 
   create_table "loans", force: :cascade do |t|
-    t.integer "user_id"
+    t.bigint "user_id"
     t.datetime "expire_at", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -53,8 +53,8 @@ ActiveRecord::Schema.define(version: 2018_10_18_171023) do
   end
 
   create_table "loans_movies", id: false, force: :cascade do |t|
-    t.integer "loan_id", null: false
-    t.integer "movie_id", null: false
+    t.bigint "loan_id", null: false
+    t.bigint "movie_id", null: false
     t.index ["loan_id"], name: "index_loans_movies_on_loan_id"
     t.index ["movie_id"], name: "index_loans_movies_on_movie_id"
   end
@@ -74,7 +74,7 @@ ActiveRecord::Schema.define(version: 2018_10_18_171023) do
     t.index ["title"], name: "index_movies_on_title", unique: true
   end
 
-  create_table "taggings", force: :cascade do |t|
+  create_table "taggings", id: :serial, force: :cascade do |t|
     t.integer "tag_id"
     t.string "taggable_type"
     t.integer "taggable_id"
@@ -93,7 +93,7 @@ ActiveRecord::Schema.define(version: 2018_10_18_171023) do
     t.index ["tagger_id"], name: "index_taggings_on_tagger_id"
   end
 
-  create_table "tags", force: :cascade do |t|
+  create_table "tags", id: :serial, force: :cascade do |t|
     t.string "name"
     t.integer "taggings_count", default: 0
     t.index ["name"], name: "index_tags_on_name", unique: true
@@ -115,4 +115,5 @@ ActiveRecord::Schema.define(version: 2018_10_18_171023) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  add_foreign_key "loans", "users"
 end

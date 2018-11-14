@@ -29,9 +29,9 @@
 #   m.save
 # end
 
-u = User.new
-u.first_name = 'Peter'
-u.last_name = 'Jackson'
-u.email = 'peter@gmail.com'
-u.password = 'rocketlauncher'
-u.save
+# u = User.new
+# u.first_name = 'Peter'
+# u.last_name = 'Jackson'
+# u.email = 'peter@gmail.com'
+# u.password = 'rocketlauncher'
+# u.save
