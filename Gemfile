@@ -59,5 +59,7 @@ gem 'validates_timeliness'
 gem 'active_model_serializers'
 gem 'devise-jwt'
 gem 'kaminari'
+gem "loofah", ">= 2.2.3"
 gem 'pg'
+gem "rack", ">= 2.0.6"
 gem 'rack-reducer'
