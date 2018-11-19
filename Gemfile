@@ -57,6 +57,8 @@ gem 'acts-as-taggable-on'
 gem 'validates_timeliness'
 
 gem 'active_model_serializers'
+gem 'activestorage-cloudinary-service'
+gem 'cloudinary'
 gem 'devise-jwt'
 gem 'kaminari'
 gem "loofah", ">= 2.2.3"
